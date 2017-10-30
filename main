@@ -1,0 +1,91 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.IO;
+
+namespace week3IndividualProgram_NamesScoresFile
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            string info;
+            string[] recordData = new string[2];
+            string[] recordDataOut = new string[20];
+            string empName = string.Empty;
+            string empNum = string.Empty;
+            string totalPay = string.Empty;
+            string outInfo = string.Empty; ;
+            int i = 0;
+
+            try
+            {
+
+                using (StreamReader getInfo = new StreamReader("student&scores.txt"))
+                {
+                    lst_box.Items.Clear();
+                    //DisableOtherControls();
+
+                    while ((info = getInfo.ReadLine()) != null)
+                    {
+                        recordData = info.Split('|');
+                        outInfo = recordData[0] + "\t\t\t" + recordData[1];
+                        recordDataOut[i] = recordData[0];
+                        i++;
+                        recordDataOut[i] = recordData[1];
+                        i++;
+                        //String.Format("{0:c}", double.Parse(recordData[2]));
+                        lst_box.Items.Add(outInfo);
+                        lst_box.Visible = true;
+                    }
+
+
+                    getInfo.Close();
+
+                    int intHighscore = 0;
+                    string strStudentName = "";
+                    int intTotalScore = 0;
+
+                    for (i = 1; i < recordDataOut.Count(); i += 2)
+                    {
+                        if (Convert.ToInt32(recordDataOut[i]) > intHighscore)
+                        {
+                            intHighscore = Convert.ToInt32(recordDataOut[i]);
+                            strStudentName = recordDataOut[i - 1];
+                        }
+
+                        intTotalScore = intTotalScore + Convert.ToInt32(recordDataOut[i]);
+
+
+                    }
+
+                    lst_box.Items.Add("Student with highest: " + strStudentName);
+                    lst_box.Items.Add("Average score " + (intTotalScore / 10 ));
+                }
+
+            }
+
+            catch (Exception exc)
+            {
+                label1.Text = exc.Message;
+                label1.Visible = true;
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+    }
+}
